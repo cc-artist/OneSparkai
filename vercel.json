@@ -3,8 +3,6 @@
   "services": {
     "app": {
       "root": ".",
-      "framework": null,
-      "buildCommand": null,
       "installCommand": "echo static-no-install"
     },
     "server": {
