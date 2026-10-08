@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Connection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Connection Test</h1>
+    
+    <div class="test-section">
+        <h2>1. Test Backend Connection</h2>
+        <button onclick="testBackendConnection()">Test Backend API</button>
+        <div id="backend-result" class="test-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. Test Preview Functionality</h2>
+        <button onclick="testPreview()">Test Image Preview</button>
+        <div id="preview-result" class="test-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. Test Screenshot Search API</h2>
+        <button onclick="testScreenshotSearch()">Test Screenshot Search</button>
+        <div id="screenshot-result" class="test-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>4. Environment Information</h2>
+        <div id="env-info" class="test-result"></div>
+    </div>
+
+    <script>
+        // Display environment info
+        function displayEnvInfo() {
+            const envInfo = document.getElementById('env-info');
+            envInfo.innerHTML = `
+                <p><strong>Window Location:</strong> ${window.location.href}</p>
+                <p><strong>Origin:</strong> ${window.location.origin}</p>
+                <p><strong>Protocol:</strong> ${window.location.protocol}</p>
+                <p><strong>Host:</strong> ${window.location.host}</p>
+                <p><strong>Port:</strong> ${window.location.port}</p>
+            `;
+        }
+        
+        // Test backend connection
+        async function testBackendConnection() {
+            const result = document.getElementById('backend-result');
+            result.innerHTML = '<p>Testing backend connection...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:3000/health');
+                if (response.ok) {
+                    const data = await response.json();
+                    result.className = 'test-result success';
+                    result.innerHTML = `<p><strong>✓ Success!</strong> Backend is accessible.</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                } else {
+                    result.className = 'test-result error';
+                    result.innerHTML = `<p><strong>✗ Error:</strong> Backend returned status ${response.status}</p>`;
+                }
+            } catch (error) {
+                result.className = 'test-result error';
+                result.innerHTML = `<p><strong>✗ Error:</strong> ${error.message}</p>`;
+            }
+        }
+        
+        // Test image preview
+        function testPreview() {
+            const result = document.getElementById('preview-result');
+            result.innerHTML = '<p>Testing preview functionality...</p>';
+            
+            try {
+                // Check if preview function exists
+                if (typeof showPreview === 'function') {
+                    showPreview('https://source.unsplash.com/1920x1080/?test', 'Test Image');
+                    result.className = 'test-result success';
+                    result.innerHTML = '<p><strong>✓ Success!</strong> Preview function called successfully. Check if preview is displayed.</p>';
+                } else {
+                    result.className = 'test-result error';
+                    result.innerHTML = '<p><strong>✗ Error:</strong> showPreview function not found.</p>';
+                }
+            } catch (error) {
+                result.className = 'test-result error';
+                result.innerHTML = `<p><strong>✗ Error:</strong> ${error.message}</p>`;
+            }
+        }
+        
+        // Test screenshot search API
+        async function testScreenshotSearch() {
+            const result = document.getElementById('screenshot-result');
+            result.innerHTML = '<p>Testing screenshot search API...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:3000/api/v1/screenshot-finder', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        keywords: 'test',
+                        resolution: '1080p',
+                        imageStyle: 'photorealistic'
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    result.className = 'test-result success';
+                    result.innerHTML = `<p><strong>✓ Success!</strong> Screenshot API returned results.</p><p>Found ${data.data.screenshots.length} screenshots.</p>`;
+                } else {
+                    result.className = 'test-result error';
+                    result.innerHTML = `<p><strong>✗ Error:</strong> API returned status ${response.status}</p>`;
+                }
+            } catch (error) {
+                result.className = 'test-result error';
+                result.innerHTML = `<p><strong>✗ Error:</strong> ${error.message}</p>`;
+            }
+        }
+        
+        // Initialize
+        window.onload = displayEnvInfo;
+    </script>
+</body>
+</html>

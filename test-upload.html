@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test File Upload</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            white-space: pre-wrap;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        input[type="file"] {
+            margin: 10px 0;
+        }
+        button {
+            margin: 10px 0;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test File Upload</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: Basic File Upload</h2>
+        <input type="file" id="fileInput">
+        <button onclick="testUpload()">Upload File</button>
+        <div id="testResult" class="test-result"></div>
+    </div>
+    
+    <script>
+        function logResult(message, isSuccess) {
+            const resultDiv = document.getElementById('testResult');
+            resultDiv.textContent = message;
+            resultDiv.className = `test-result ${isSuccess ? 'success' : 'error'}`;
+        }
+        
+        function testUpload() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                logResult('Please select a file first', false);
+                return;
+            }
+            
+            logResult(`Uploading file: ${file.name}...`, true);
+            
+            const apiUrl = 'http://localhost:3000/api/v1/idea-to-prompt/upload';
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            const xhr = new XMLHttpRequest();
+            
+            xhr.upload.addEventListener('progress', function(e) {
+                if (e.lengthComputable) {
+                    const progress = Math.round((e.loaded / e.total) * 100);
+                    logResult(`Uploading file: ${file.name}... ${progress}%`, true);
+                }
+            });
+            
+            xhr.addEventListener('load', function() {
+                logResult(`Upload completed with status: ${xhr.status}\nResponse: ${xhr.responseText}`, xhr.status === 200);
+            });
+            
+            xhr.addEventListener('error', function() {
+                logResult(`Upload failed: Network error`, false);
+            });
+            
+            xhr.addEventListener('timeout', function() {
+                logResult(`Upload failed: Timeout`, false);
+            });
+            
+            xhr.open('POST', apiUrl, true);
+            xhr.send(formData);
+        }
+    </script>
+</body>
+</html>

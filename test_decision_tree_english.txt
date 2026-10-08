@@ -1,0 +1,34 @@
+# Decision Tree Algorithms in Machine Learning
+
+## What is a Decision Tree
+A decision tree is a supervised learning algorithm used for classification and regression. It builds a tree-like structure to represent decision rules, where each internal node represents a test on a feature, each branch represents the outcome of the test, and each leaf node represents a class or value.
+
+## How Decision Trees Work
+The construction process of a decision tree is a recursive process that starts from the root node, selects the optimal feature to split the data, until stopping conditions are met. Common feature selection criteria include information gain, information gain ratio, and Gini index.
+
+## ID3 Algorithm
+The ID3 algorithm is one of the earliest decision tree algorithms, which uses information gain to select features. Information gain measures the reduction in data uncertainty after splitting using a certain feature.
+
+## C4.5 Algorithm
+The C4.5 algorithm is an improved version of the ID3 algorithm, which uses information gain ratio to select features, solving the problem that the ID3 algorithm tends to select features with more values. C4.5 also supports continuous feature processing and pruning operations.
+
+## CART Algorithm
+CART stands for Classification and Regression Trees, which supports both classification and regression tasks. In classification tasks, CART uses Gini index to select features; in regression tasks, CART uses mean squared error to select features.
+
+## Advantages and Disadvantages of Decision Trees
+### Advantages
+- Easy to understand and interpret
+- No need for feature normalization
+- Can handle both discrete and continuous features
+- Can capture nonlinear relationships
+
+### Disadvantages
+- Prone to overfitting
+- Sensitive to noisy data
+- High instability (small changes in data may lead to large changes in tree structure)
+
+## Applications of Decision Trees
+Decision trees are widely used in finance, healthcare, e-commerce and other fields for credit assessment, disease diagnosis, user behavior analysis and other tasks.
+
+## Summary
+Decision trees are simple yet powerful machine learning algorithms that display decision processes through intuitive tree structures with high interpretability. Although they have some limitations, their performance can be significantly improved through ensemble learning methods such as random forests and gradient boosting trees.

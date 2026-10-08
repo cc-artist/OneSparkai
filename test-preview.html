@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>预览系统测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        h1 {
+            color: #333;
+        }
+        h2 {
+            color: #666;
+        }
+        .test-image {
+            width: 200px;
+            height: 120px;
+            object-fit: cover;
+            cursor: pointer;
+            margin: 10px;
+            border-radius: 4px;
+            transition: transform 0.2s;
+        }
+        .test-image:hover {
+            transform: scale(1.05);
+        }
+        .test-button {
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .test-button:hover {
+            background: #45a049;
+        }
+        .debug-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>预览系统测试</h1>
+    
+    <div class="test-section">
+        <h2>1. 基础预览测试</h2>
+        <p>点击以下图片测试预览功能：</p>
+        <img class="test-image" src="https://source.unsplash.com/1920x1080/?nature" alt="自然风景" onclick="showImagePreview(this.src, '自然风景')">
+        <img class="test-image" src="https://source.unsplash.com/1920x1080/?city" alt="城市景观" onclick="showImagePreview(this.src, '城市景观')">
+        <img class="test-image" src="https://source.unsplash.com/1920x1080/?animals" alt="动物" onclick="showImagePreview(this.src, '动物')">
+    </div>
+    
+    <div class="test-section">
+        <h2>2. 按钮触发测试</h2>
+        <p>点击以下按钮通过JavaScript代码触发预览：</p>
+        <button class="test-button" onclick="testPreview1()">测试预览 1</button>
+        <button class="test-button" onclick="testPreview2()">测试预览 2</button>
+        <button class="test-button" onclick="testPreview3()">测试预览 3</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. 直接函数调用测试</h2>
+        <p>在浏览器控制台中运行以下代码测试：</p>
+        <pre>showImagePreview('https://source.unsplash.com/1920x1080/?technology', '技术图片')</pre>
+    </div>
+    
+    <div id="debug" class="debug-info">
+        调试信息：
+    </div>
+    
+    <!-- 引入全新的预览系统 -->
+    <script src="new-preview-system.js"></script>
+    
+    <script>
+        // 测试函数
+        function testPreview1() {
+            showImagePreview('https://source.unsplash.com/1920x1080/?technology', '技术图片');
+        }
+        
+        function testPreview2() {
+            showImagePreview('https://source.unsplash.com/1920x1080/?food', '美食图片');
+        }
+        
+        function testPreview3() {
+            showImagePreview('https://source.unsplash.com/1920x1080/?travel', '旅行图片');
+        }
+        
+        // 自定义调试日志
+        function logDebug(message) {
+            const debugDiv = document.getElementById('debug');
+            const timestamp = new Date().toLocaleTimeString();
+            debugDiv.innerHTML += `\n[${timestamp}] ${message}`;
+            debugDiv.scrollTop = debugDiv.scrollHeight;
+        }
+        
+        // 覆盖默认的logDebug函数
+        window.logDebug = logDebug;
+        
+        // 页面加载完成后记录信息
+        window.addEventListener('load', function() {
+            logDebug('页面加载完成，预览系统已初始化');
+        });
+    </script>
+</body>
+</html>

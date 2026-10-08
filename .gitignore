@@ -1,0 +1,56 @@
+# ===== 依赖 =====
+node_modules/
+**/node_modules/
+
+# ===== 环境变量与密钥（禁止提交真实密钥）=====
+.env
+.env.local
+.env.*.local
+server/.env
+*.csv
+# 明文密钥清单（真实 API Key，禁止上传公开仓库）
+视频生成AI 大模型.txt
+默认业务空间-apiKey-*.csv
+
+# 保留 .env.example / .env.production（占位模板）
+!server/.env.example
+!server/.env.production
+
+# ===== 日志 =====
+logs/
+*.log
+server/logs/
+
+# ===== 上传文件与生成的媒体资源 =====
+uploads/
+server/uploads/
+*.mp4
+*.webm
+*.mov
+*.avi
+*.mkv
+*.m4v
+*.wav
+*.mp3
+
+# ===== FFmpeg 二进制与压缩包 =====
+ffmpeg/
+FFmpeg-Builds/
+ffmpeg.7z
+ffmpeg.zip
+ffmpeg.exe
+
+# ===== 嵌套的第三方 Git 仓库 =====
+awesome-video-generation/
+
+# ===== 临时/测试产物 =====
+*.tmp
+*.bak
+response.json
+
+# ===== 系统与编辑器 =====
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.trae/

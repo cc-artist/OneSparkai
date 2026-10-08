@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Screenshot API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .test-result {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .screenshot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .screenshot-item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .screenshot-item img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Screenshot API</h1>
+    
+    <div class="test-result" id="test-result">
+        <h3>Testing API...</h3>
+    </div>
+    
+    <div id="screenshot-results">
+        <h3>Screenshot Results:</h3>
+        <div class="screenshot-grid" id="screenshot-grid"></div>
+    </div>
+
+    <script>
+        // Test the screenshot API
+        async function testScreenshotAPI() {
+            const testResult = document.getElementById('test-result');
+            const screenshotGrid = document.getElementById('screenshot-grid');
+            
+            try {
+                // Make API request
+                const response = await fetch('http://localhost:3000/api/v1/screenshot-finder', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        keywords: 'computer',
+                        resolution: '1080p',
+                        imageStyle: 'photorealistic'
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('API Response:', data);
+                
+                // Check if response is valid
+                if (data.status === 200 && data.data && data.data.screenshots && Array.isArray(data.data.screenshots)) {
+                    testResult.innerHTML = `
+                        <h3>✅ API Test Success</h3>
+                        <p>Status: ${data.status}</p>
+                        <p>Message: ${data.message}</p>
+                        <p>Total Screenshots: ${data.data.screenshots.length}</p>
+                    `;
+                    testResult.className = 'test-result success';
+                    
+                    // Display screenshots
+                    data.data.screenshots.forEach((screenshot, index) => {
+                        // Check if all required properties exist
+                        const hasAllProps = screenshot.id && screenshot.title && screenshot.url && screenshot.style && screenshot.resolution;
+                        
+                        const screenshotItem = document.createElement('div');
+                        screenshotItem.className = 'screenshot-item';
+                        screenshotItem.innerHTML = `
+                            <img src="${screenshot.url}" alt="${screenshot.title}">
+                            <h4>${screenshot.title}</h4>
+                            <p>Resolution: ${screenshot.resolution}</p>
+                            <p>Style: ${screenshot.style}</p>
+                            <p>ID: ${screenshot.id}</p>
+                            <p><strong>Valid:</strong> ${hasAllProps ? '✅' : '❌'}</p>
+                        `;
+                        screenshotGrid.appendChild(screenshotItem);
+                    });
+                } else {
+                    throw new Error('Invalid response format');
+                }
+                
+            } catch (error) {
+                testResult.innerHTML = `
+                    <h3>❌ API Test Failed</h3>
+                    <p>Error: ${error.message}</p>
+                `;
+                testResult.className = 'test-result error';
+                console.error('Test Error:', error);
+            }
+        }
+        
+        // Run test when page loads
+        window.onload = testScreenshotAPI;
+    </script>
+</body>
+</html>

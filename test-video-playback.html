@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>视频播放测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 800px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        video {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+            display: block;
+            margin: 0 auto 20px;
+        }
+        .info {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .info p {
+            margin: 5px 0;
+        }
+        .info strong {
+            color: #555;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+        .btn-secondary {
+            background-color: #95a5a6;
+            color: white;
+        }
+        .status {
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .success {
+            color: #27ae60;
+        }
+        .error {
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>视频播放测试</h1>
+        
+        <div class="info">
+            <p><strong>测试视频URL:</strong> <span id="videoUrl">http://localhost:3000/uploads/videos/514582b2-92d0-40a3-880e-bc93b634b7dc.mp4</span></p>
+            <p><strong>视频状态:</strong> <span id="videoStatus">加载中...</span></p>
+        </div>
+        
+        <video id="videoPlayer" controls autoplay>
+            <source src="http://localhost:3000/uploads/videos/514582b2-92d0-40a3-880e-bc93b634b7dc.mp4" type="video/mp4">
+            您的浏览器不支持视频播放。
+        </video>
+        
+        <div class="controls">
+            <button class="btn-primary" onclick="reloadVideo()">重新加载</button>
+            <button class="btn-secondary" onclick="testNewVideo()">测试新视频生成</button>
+        </div>
+        
+        <div class="status" id="status"></div>
+    </div>
+
+    <script>
+        const videoPlayer = document.getElementById('videoPlayer');
+        const videoStatus = document.getElementById('videoStatus');
+        const status = document.getElementById('status');
+        
+        // 监听视频加载事件
+        videoPlayer.addEventListener('loadedmetadata', function() {
+            videoStatus.textContent = '已加载';
+            status.textContent = '✅ 视频加载成功！';
+            status.className = 'status success';
+            // 确保controls启用
+            this.controls = true;
+            this.setAttribute('controls', 'controls');
+        });
+        
+        // 监听视频播放事件
+        videoPlayer.addEventListener('play', function() {
+            status.textContent = '▶️ 视频正在播放！';
+            status.className = 'status success';
+        });
+        
+        // 监听视频播放结束事件
+        videoPlayer.addEventListener('ended', function() {
+            status.textContent = '⏹️ 视频播放结束！';
+            status.className = 'status success';
+        });
+        
+        // 监听视频错误事件
+        videoPlayer.addEventListener('error', function(e) {
+            let errorMessage = '❌ 视频播放错误！';
+            switch(e.target.error.code) {
+                case e.target.error.MEDIA_ERR_ABORTED:
+                    errorMessage += ' 用户中止了视频加载';
+                    break;
+                case e.target.error.MEDIA_ERR_NETWORK:
+                    errorMessage += ' 网络错误';
+                    break;
+                case e.target.error.MEDIA_ERR_DECODE:
+                    errorMessage += ' 视频解码错误';
+                    break;
+                case e.target.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
+                    errorMessage += ' 视频格式不支持';
+                    break;
+                default:
+                    errorMessage += ' 未知错误';
+            }
+            status.textContent = errorMessage;
+            status.className = 'status error';
+            videoStatus.textContent = '错误';
+        });
+        
+        // 重新加载视频
+        function reloadVideo() {
+            status.textContent = '🔄 重新加载视频...';
+            status.className = 'status';
+            videoPlayer.load();
+            videoPlayer.play();
+        }
+        
+        // 测试新视频生成
+        async function testNewVideo() {
+            status.textContent = '🔄 正在生成新视频...';
+            status.className = 'status';
+            
+            try {
+                // 调用视频生成API
+                const response = await fetch('http://localhost:3000/api/v1/video-generator', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        videoModel: 'model-1',
+                        videoTitle: 'Test Video ' + new Date().toISOString(),
+                        videoDescription: 'This is a test video generated at ' + new Date().toISOString(),
+                        videoStyle: 'realistic',
+                        resolution: '1280x720',
+                        voiceOver: false,
+                        voiceScript: ''
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('视频生成失败');
+                }
+                
+                const data = await response.json();
+                status.textContent = `✅ 视频生成任务已创建！Task ID: ${data.taskId}`;
+                status.className = 'status success';
+                
+                // 轮询获取视频状态
+                await pollVideoStatus(data.taskId);
+                
+            } catch (error) {
+                status.textContent = `❌ 视频生成失败: ${error.message}`;
+                status.className = 'status error';
+            }
+        }
+        
+        // 轮询获取视频状态
+        async function pollVideoStatus(taskId) {
+            let attempts = 0;
+            const maxAttempts = 20;
+            
+            while (attempts < maxAttempts) {
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                attempts++;
+                
+                try {
+                    const response = await fetch(`http://localhost:3000/api/v1/video-generator/${taskId}`);
+                    const data = await response.json();
+                    
+                    if (data.status === 'completed' && data.videoUrl) {
+                        status.textContent = `✅ 视频生成完成！正在播放新视频...`;
+                        status.className = 'status success';
+                        
+                        // 更新视频URL并播放
+                        const videoUrl = document.getElementById('videoUrl');
+                        videoUrl.textContent = data.videoUrl;
+                        videoPlayer.src = data.videoUrl;
+                        videoPlayer.load();
+                        videoPlayer.play();
+                        return;
+                    } else if (data.status === 'failed') {
+                        status.textContent = `❌ 视频生成失败: ${data.message}`;
+                        status.className = 'status error';
+                        return;
+                    } else {
+                        status.textContent = `⏳ 视频生成中... ${data.progress || 0}%`;
+                        status.className = 'status';
+                    }
+                } catch (error) {
+                    status.textContent = `❌ 获取视频状态失败: ${error.message}`;
+                    status.className = 'status error';
+                    return;
+                }
+            }
+            
+            status.textContent = '⏳ 视频生成超时，请手动刷新页面重试';
+            status.className = 'status';
+        }
+    </script>
+</body>
+</html>
