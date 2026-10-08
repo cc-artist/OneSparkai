@@ -265,7 +265,8 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-const PORT = config.server.port;
+// Vercel 注入 process.env.PORT；本地开发回退到配置文件端口
+const PORT = process.env.PORT || config.server.port;
 const server = app.listen(PORT, () => {
   logger.info(`Server running on port ${PORT}`);
   logger.info(`Environment: ${config.server.nodeEnv}`);

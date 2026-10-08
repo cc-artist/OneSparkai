@@ -2323,7 +2323,7 @@
                 }
 
                 // 准备API请求
-                const apiUrl = 'http://localhost:3001/api/v1/multi-modal-reverse-prompt';
+                const apiUrl = '/api/v1/multi-modal-reverse-prompt';
 
                 // 创建FormData
                 const formData = new FormData();
@@ -3529,7 +3529,7 @@
                     resultsContainer.innerHTML = '<p style="text-align: center; color: #666;">Analyzing channel... Please wait.</p>';
                     
                     // Send API request to analyze channel
-                    const apiUrl = 'http://localhost:3001/api/v1/channel-analysis/analyze';
+                    const apiUrl = '/api/v1/channel-analysis/analyze';
                     fetch(apiUrl, {
                         method: 'POST',
                         headers: {
@@ -3709,7 +3709,7 @@
                     }
                     
                     // Send API request to find screenshots
-                    const apiUrl = 'http://localhost:3001/api/v1/screenshot-finder';
+                    const apiUrl = '/api/v1/screenshot-finder';
                     fetch(apiUrl, {
                         method: 'POST',
                         headers: {
@@ -4730,7 +4730,7 @@
         function uploadFileToBackend(file, fileId) {
             logDebug('开始向后端上传文件: ' + file.name);
             
-            const apiUrl = 'http://localhost:3001/api/v1/idea-to-prompt/upload';
+            const apiUrl = '/api/v1/idea-to-prompt/upload';
             const formData = new FormData();
             formData.append('file', file);
             
@@ -5392,7 +5392,7 @@
                         };
                         
                         // Call API to generate video
-                fetch('http://localhost:3001/api/v1/video-generator', {
+                fetch('/api/v1/video-generator', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -5474,7 +5474,7 @@
         function checkVideoStatus(taskId) {
             console.log('Checking status for task:', taskId);
             
-            fetch(`http://localhost:3001/api/v1/video-generator/${taskId}`)
+            fetch(`/api/v1/video-generator/${taskId}`)
                 .then(response => {
                     console.log('Response status:', response.status);
                     console.log('Response headers:', response.headers);
@@ -5842,7 +5842,7 @@
         
         // Load video history
         function loadVideoHistory() {
-            fetch('http://localhost:3001/api/v1/video-generator/history')
+            fetch('/api/v1/video-generator/history')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
@@ -5936,7 +5936,7 @@
         
         function loadSystemStatus() {
             // Check backend service status
-            fetch('http://localhost:3001/health')
+            fetch('/health')
                 .then(response => response.json())
                 .then(data => {
                     const backendStatus = document.getElementById('backend-status');
@@ -5958,7 +5958,7 @@
         
         function loadApiKeys() {
             // Load YouTube API key from backend
-            fetch('http://localhost:3001/api/v1/settings')
+            fetch('/api/v1/settings')
                 .then(response => response.json())
                 .then(data => {
                     if (data.youtubeApiKey) {
@@ -5971,7 +5971,7 @@
         }
         
         function saveYouTubeApiKey(apiKey) {
-            fetch('http://localhost:3001/api/v1/settings', {
+            fetch('/api/v1/settings', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -5989,7 +5989,7 @@
         
         function loadTasks() {
             // Load video generation tasks
-            fetch('http://localhost:3001/api/v1/video-generator/history')
+            fetch('/api/v1/video-generator/history')
                 .then(response => response.json())
                 .then(data => {
                     const taskList = document.getElementById('task-list');
